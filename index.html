@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Gen Alpha Flashcards</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <style>
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background: linear-gradient(to bottom right, #f0f8ff, #e6ffe6);
+      text-align: center;
+      overflow-x: hidden;
+    }
+    #flashcards-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .card {
+      background: #ffffff;
+      border: 3px solid #90ee90;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 10px;
+      width: 250px;
+      height: 220px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: transform 0.4s ease;
+      position: relative;
+    }
+    .card:hover {
+      transform: scale(1.1) rotate(-1deg);
+    }
+    .front, .back {
+      display: none;
+      font-size: 1.1em;
+      padding: 10px;
+    }
+    .card.show-front .front {
+      display: block;
+    }
+    .card.show-back .back {
+      display: block;
+    }
+    .meme {
+      width: 100%;
+      margin-top: 10px;
+      border-radius: 10px;
+    }
+    .mascot {
+      width: 120px;
+      position: absolute;
+      top: -80px;
+      left: 20px;
+      animation: floaty 3s ease-in-out infinite;
+    }
+    @keyframes floaty {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0); }
+    }
+    .popup-fact {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: #fff8c4;
+      border: 1px solid #ffdf70;
+      padding: 12px 18px;
+      border-radius: 10px;
+      box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+      font-size: 1rem;
+      display: none;
+      z-index: 1000;
+    }
+    .confetti {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+  <h1 class="animate__animated animate__fadeInDown">🎮 Gen Alpha Math Flashcards 🎉</h1>
+  <img src="https://www.clipartmax.com/png/middle/319-3191266_math-ninja-clipart.png" class="mascot" alt="Mascot Ninja">
+  <audio id="flipSound" src="https://www.myinstants.com/media/sounds/mario-coin.mp3"></audio>
+  <audio id="victorySound" src="https://www.myinstants.com/media/sounds/level-up.mp3"></audio>
+  <div class="popup-fact" id="popupFact">Did you know? Math is the only subject where you can prove you're right!</div>
+  <canvas class="confetti" id="confettiCanvas"></canvas>
+  <div id="flashcards-container"></div>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+  <script>
+    const flashcardsData = [
+      { front: "Distributive Property", back: "a(b + c) = ab + ac.", meme: "https://i.pinimg.com/originals/7e/fc/30/7efc30a2ebf0c2b2a8430a8e496e2b07.jpg" },
+      { front: "tri- means three", back: "triangle, tricycle", meme: "https://i.pinimg.com/originals/3f/0a/c2/3f0ac2dd2b53a420cba55c7a1b2d6814.jpg" },
+      { front: "Pattern", back: "A repeated or regular arrangement.", meme: "https://i.pinimg.com/originals/fc/4e/e6/fc4ee67e3b29f10b83f4f0b7c6b2e053.jpg" },
+      { front: "quad- means four", back: "quadrilateral, quadrant", meme: "https://i.pinimg.com/originals/e0/5b/02/e05b02a2c3908459bfa48ab914a1e0ce.jpg" },
+      { front: "Variable", back: "A letter that stands for a number.", meme: "https://i.pinimg.com/originals/f4/e3/fd/f4e3fded3184e1274cf9dc07949c634f.jpg" }
+    ];
+
+    const flipSound = document.getElementById("flipSound");
+    const victorySound = document.getElementById("victorySound");
+    const container = document.getElementById("flashcards-container");
+    const popupFact = document.getElementById("popupFact");
+    let flipCount = 0;
+
+    function showPopupFact() {
+      popupFact.style.display = 'block';
+      setTimeout(() => popupFact.style.display = 'none', 4000);
+    }
+
+    flashcardsData.forEach(cardData => {
+      const card = document.createElement('div');
+      card.className = 'card show-front animate__animated animate__zoomIn';
+
+      const front = document.createElement('div');
+      front.className = 'front';
+      front.innerText = cardData.front;
+
+      const back = document.createElement('div');
+      back.className = 'back';
+      back.innerText = cardData.back;
+
+      const meme = document.createElement('img');
+      meme.className = 'meme';
+      meme.src = cardData.meme;
+      back.appendChild(meme);
+
+      card.appendChild(front);
+      card.appendChild(back);
+
+      card.addEventListener('click', () => {
+        card.classList.toggle('show-front');
+        card.classList.toggle('show-back');
+        flipSound.currentTime = 0;
+        flipSound.play();
+        flipCount++;
+
+        if (flipCount % 5 === 0) {
+          victorySound.play();
+          confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        }
+        if (Math.random() < 0.2) showPopupFact();
+      });
+
+      container.appendChild(card);
+    });
+  </script>
+</body>
+</html>
